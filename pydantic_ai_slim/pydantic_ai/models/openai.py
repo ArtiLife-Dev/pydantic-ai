@@ -427,7 +427,7 @@ class OpenAIModel(Model):
                         audio = InputAudio(data=base64_encoded, format=item.format)
                         content.append(ChatCompletionContentPartInputAudioParam(input_audio=audio, type='input_audio'))
                     else:  # pragma: no cover
-                        raise RuntimeError(f'Unsupported binary content type: {item.media_type}')
+                        content.append(ChatCompletionContentPartTextParam(text=f'[Unsupported file type: {item.media_type}.]'), type='text')
                 elif isinstance(item, AudioUrl):  # pragma: no cover
                     client = cached_async_http_client()
                     response = await client.get(item.url)

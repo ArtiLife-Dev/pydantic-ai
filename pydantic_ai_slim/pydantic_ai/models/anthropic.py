@@ -363,7 +363,9 @@ class AnthropicModel(Model):
                             type='document',
                         )
                     else:
-                        raise RuntimeError('Only images and PDFs are supported for binary content')
+                        yield TextBlockParam(
+                            text=f'[Unsupported file type: {item.media_type}.]'
+                        )
                 elif isinstance(item, ImageUrl):
                     yield ImageBlockParam(source={'type': 'url', 'url': item.url}, type='image')
                 elif isinstance(item, DocumentUrl):
@@ -377,9 +379,13 @@ class AnthropicModel(Model):
                             type='document',
                         )
                     else:  # pragma: no cover
-                        raise RuntimeError(f'Unsupported media type: {item.media_type}')
+                        yield TextBlockParam(
+                            text=f'[Unsupported file type: {item.media_type} from url: {item.url}]'
+                        )
                 else:
-                    raise RuntimeError(f'Unsupported content type: {type(item)}')
+                    yield TextBlockParam(
+                            text=f'[Unsupported Message: {item.url if item.url else item.media_type}]'
+                        )
 
     @staticmethod
     def _map_tool_definition(f: ToolDefinition) -> ToolParam:

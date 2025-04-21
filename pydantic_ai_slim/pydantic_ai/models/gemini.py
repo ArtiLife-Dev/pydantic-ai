@@ -338,7 +338,11 @@ class GeminiModel(Model):
                     )
                     content.append(inline_data)
                 elif isinstance(item, VideoUrl):  # pragma: no cover
-                    raise NotImplementedError('VideoUrl is not supported for Gemini.')
+                    # check if is youtube video
+                    if 'youtube.com/watch?v=' in item.url or 'youtu.be/' in item.url:
+                        content.append(_GeminiFileDataPart(file_data=_GeminiFileData(file_uri=item.url)))
+                    else:
+                        content.append(_GeminiTextPart(text=f'[Unsupported Video URL: {item.url}.]'))
                 else:
                     assert_never(item)
         return content
