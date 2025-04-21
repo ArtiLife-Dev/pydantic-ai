@@ -364,7 +364,7 @@ class AnthropicModel(Model):
                         )
                     else:
                         yield TextBlockParam(
-                            text=f'[Unsupported file type: {item.media_type}.]'
+                            text=f'[Unsupported file type: {item.media_type}.]', type='text'
                         )
                 elif isinstance(item, ImageUrl):
                     yield ImageBlockParam(source={'type': 'url', 'url': item.url}, type='image')
@@ -380,11 +380,13 @@ class AnthropicModel(Model):
                         )
                     else:  # pragma: no cover
                         yield TextBlockParam(
-                            text=f'[Unsupported file type: {item.media_type} from url: {item.url}]'
+                            text=f'[Unsupported file type: {item.media_type} from url: {item.url}]',
+                            type='text',
                         )
                 else:
                     yield TextBlockParam(
-                            text=f'[Unsupported Message: {item.url if item.url else item.media_type}]'
+                            text=f'[Unsupported Message: {item.url if item.url else item.media_type}]',
+                            type='text',
                         )
 
     @staticmethod

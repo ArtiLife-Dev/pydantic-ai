@@ -72,6 +72,40 @@ allow any name in the type hints.
 See [the Gemini API docs](https://ai.google.dev/gemini-api/docs/models/gemini#model-variations) for a full list.
 """
 
+SUPPORTED_MIMES = [
+    'application/pdf',
+    'application/x-javascript',
+    'text/javascript',
+    'application/x-python',
+    'text/x-python',
+    'text/plain',
+    'text/html',
+    'text/css',
+    'text/md',
+    'text/csv',
+    'text/xml',
+    'text/rtf',
+    'image/png',
+    'image/jpeg',
+    'image/webp',
+    'image/heic',
+    'image/heif',
+    'video/mp4',
+    'video/mpeg',
+    'video/mov',
+    'video/avi',
+    'video/x-flv',
+    'video/mpg',
+    'video/webm',
+    'video/wmv',
+    'video/3gpp',
+    'audio/wav',
+    'audio/mp3',
+    'audio/aiff',
+    'audio/aac',
+    'audio/ogg',
+    'audio/flac'
+]
 
 class GeminiModelSettings(ModelSettings):
     """Settings used for a Gemini model request.
@@ -325,9 +359,12 @@ class GeminiModel(Model):
                     content.append({'text': item})
                 elif isinstance(item, BinaryContent):
                     base64_encoded = base64.b64encode(item.data).decode('utf-8')
-                    content.append(
-                        _GeminiInlineDataPart(inline_data={'data': base64_encoded, 'mime_type': item.media_type})
-                    )
+                    if item.media_type in SUPPORTED_MIMES:
+                        content.append(
+                            _GeminiInlineDataPart(inline_data={'data': base64_encoded, 'mime_type': item.media_type})
+                        )
+                    else:
+                        content.append(_GeminiTextPart(text=f'[Unsupported MIME type: {item.media_type}.]'))
                 elif isinstance(item, (AudioUrl, ImageUrl, DocumentUrl)):
                     client = cached_async_http_client()
                     response = await client.get(item.url, follow_redirects=True)
