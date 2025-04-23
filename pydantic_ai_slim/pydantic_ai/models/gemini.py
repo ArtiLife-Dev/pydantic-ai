@@ -377,7 +377,7 @@ class GeminiModel(Model):
                 elif isinstance(item, VideoUrl):  # pragma: no cover
                     # check if is youtube video
                     if 'youtube.com/watch?v=' in item.url or 'youtu.be/' in item.url:
-                        content.append(_GeminiFileDataPart(file_data=_GeminiFileData(file_uri=item.url)))
+                        content.append(_GeminiFileDataPart(file_data={'file_uri': item.url, 'mime_type': ''}))
                     else:
                         content.append(_GeminiTextPart(text=f'[Unsupported Video URL: {item.url}.]'))
                 else:
